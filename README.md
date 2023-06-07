@@ -1,0 +1,1 @@
+# poc-cooperativa-votacao-java-mongo
