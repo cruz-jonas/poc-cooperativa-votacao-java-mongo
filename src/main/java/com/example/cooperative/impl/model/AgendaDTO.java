@@ -14,6 +14,6 @@ public class AgendaDTO {
 
     private ObjectId id;
     private String name;
-    private Map<String, String> votos;
+    private Map<String, Integer> votos;
 
 }

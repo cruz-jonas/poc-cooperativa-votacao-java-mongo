@@ -1,8 +1,10 @@
 package com.example.cooperative.contract.controller;
 
 import com.example.cooperative.contract.controller.model.request.SessionRequest;
+import com.example.cooperative.contract.controller.model.request.VoteRequest;
 import com.example.cooperative.impl.facade.SessionFacade;
 import com.example.cooperative.impl.model.SessionDTO;
+import com.example.cooperative.impl.model.VoteDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -22,8 +24,8 @@ public class SessionController {
     }
 
     @PostMapping(value = "/voto-register")
-    public void registerVoto() {
-        sessionFacade.registerVoto();
+    public void registerVoto(@RequestBody VoteRequest request) {
+        sessionFacade.registerVoto(objectMapper.convertValue(request, VoteDTO.class));
     }
 
     @GetMapping(value = "/agenda-result")

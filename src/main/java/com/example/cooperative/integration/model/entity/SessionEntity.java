@@ -16,6 +16,7 @@ public class SessionEntity {
     @Id
     private ObjectId id;
     private String agenda;
-    private LocalDateTime duration;
+    private Integer duration;
+    private LocalDateTime createdAt;
 
 }

@@ -4,15 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
-import java.time.LocalDateTime;
-
 @Data
 @Builder
 @AllArgsConstructor
-public class SessionDTO {
+public class VoteDTO {
 
     private String idAgenda;
-    private Integer duration;
-    private LocalDateTime createdAt;
+    private String idSession;
+    private String choose;
 
 }
