@@ -1,12 +1,13 @@
 package com.example.cooperative.contract.controller;
 
+import com.example.cooperative.contract.controller.model.request.AgendaRequest;
 import com.example.cooperative.impl.facade.AgendaFacade;
-import com.example.cooperative.impl.facade.SessionFacade;
+import com.example.cooperative.impl.model.AgendaDTO;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,25 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class AgendaController {
 
     private final AgendaFacade agendaFacade;
-    private final SessionFacade sessionFacade;
+    private final ObjectMapper objectMapper;
 
     @PostMapping()
-    public void create() {
-        agendaFacade.create();
+    public String create(@RequestBody AgendaRequest request) {
+        return agendaFacade.create(objectMapper.convertValue(request, AgendaDTO.class));
     }
 
-    @PostMapping(value = "/open-session")
-    public void openSession() {
-        sessionFacade.openSession();
-    }
-
-    @PostMapping(value = "/voto-register")
-    public void registerVoto() {
-        sessionFacade.registerVoto();
-    }
-
-    @GetMapping(value = "/agenda-result")
-    public String generateResult() {
-        return sessionFacade.generateResult();
-    }
 }

@@ -1,7 +1,11 @@
 package com.example.cooperative.impl.facade;
 
+import com.example.cooperative.impl.model.AgendaDTO;
+
 public interface AgendaFacade {
 
-    void create();
+    String create(AgendaDTO dto);
+
+    AgendaDTO findById(String id);
 
 }
