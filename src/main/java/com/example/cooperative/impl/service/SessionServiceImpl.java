@@ -16,6 +16,7 @@ import com.example.cooperative.integration.model.entity.SessionEntity;
 import com.example.cooperative.integration.repository.SessionMongoRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class SessionServiceImpl implements SessionFacade {
@@ -40,6 +42,7 @@ public class SessionServiceImpl implements SessionFacade {
         validateDuration(dto);
         dto.setCreatedAt(LocalDateTime.now());
         dto.setId(UUID.randomUUID().toString());
+        log.info("[SessionServiceImpl - create] Objeto sendo persistido {}", dto);
         return saveSession(dto);
     }
 
@@ -66,11 +69,13 @@ public class SessionServiceImpl implements SessionFacade {
 
     @Transactional
     private void updateVotes(AgendaDTO agendaDTO) {
+        log.info("[SessionServiceImpl - updateVotes] Objeto sendo atualizado {}", agendaDTO);
         agendaFacade.update(agendaDTO);
     }
 
     @Transactional
     private void updateUser(UserDTO userDTO) {
+        log.info("[SessionServiceImpl - updateUser] Objeto sendo atualizado {}", userDTO);
         userFacade.update(userDTO);
     }
 
@@ -94,29 +99,38 @@ public class SessionServiceImpl implements SessionFacade {
     }
 
     private void validateAgenda(SessionDTO dto) {
+        log.info("[SessionServiceImpl - validateAgenda] Efetuando validacao da pauta {}", dto);
         AgendaDTO agendaDTO = agendaFacade.findById(dto.getIdAgenda());
         if(Objects.isNull(agendaDTO)) {
+            log.error("[SessionServiceImpl - validateAgenda] Pauta nao encontrada {}", dto);
             throw new AgendaNotFoundException("Pauta não encontrada");
         }
     }
 
     private void validateSession(VoteDTO dto) {
+        log.info("[SessionServiceImpl - validateSession] Efetuando validacao da sessao {}", dto);
         SessionDTO sessionDTO = findById(dto.getIdSession());
         if(Objects.isNull(sessionDTO)) {
+            log.error("[SessionServiceImpl - validateSession] Sessao nao encontrada {}", dto);
             throw new SessionNotFoundException("Sessão não encontrada");
         }
         if(LocalDateTime.now().isAfter(sessionDTO.getCreatedAt().plusMinutes(sessionDTO.getDuration()))) {
+            log.error("[SessionServiceImpl - validateSession] Sessao {} encerrada em {}", dto.getIdSession(),
+                    sessionDTO.getCreatedAt().plusMinutes(sessionDTO.getDuration()));
             throw new SessionClosedException("Sessão encerrada em "+sessionDTO.getCreatedAt().plusMinutes(sessionDTO.getDuration()));
         }
     }
 
     private void validateVoteType(VoteDTO dto) {
+        log.info("[SessionServiceImpl - validateVoteType] Efetuando validacao da opcao de voto {}", dto);
         VoteOptionEnum.findByDescription(dto.getChoose());
     }
 
     private void validateUser(VoteDTO dto) {
+        log.info("[SessionServiceImpl - validateUser] Efetuando validacao de usuario {}", dto);
         UserDTO userDTO = userFacade.findById(dto.getIdUser());
         if(isAlreadyVoted(dto, userDTO)) {
+            log.error("[SessionServiceImpl - validateUser] Usuario {} ja votou na sessao {}", dto.getIdUser(), dto.getIdSession());
             throw new UserAlreadyVotedException("Usuário já voltou nesta sessão");
         } else {
             userDTO.getVotedAgendas().add(dto.getIdAgenda());

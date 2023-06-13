@@ -7,12 +7,14 @@ import com.example.cooperative.impl.model.SessionDTO;
 import com.example.cooperative.impl.model.VoteDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/v1/session", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -23,11 +25,13 @@ public class SessionController {
 
     @PostMapping()
     public String create(@RequestBody SessionRequest request) {
+        log.info("[SessionController - create] Objeto recebido {}", request);
         return sessionFacade.create(objectMapper.convertValue(request, SessionDTO.class));
     }
 
     @PostMapping(value = "/voto-register")
     public void registerVoto(@RequestBody VoteRequest request) {
+        log.info("[SessionController - registerVoto] Objeto recebido {}", request);
         sessionFacade.registerVoto(objectMapper.convertValue(request, VoteDTO.class));
     }
 
