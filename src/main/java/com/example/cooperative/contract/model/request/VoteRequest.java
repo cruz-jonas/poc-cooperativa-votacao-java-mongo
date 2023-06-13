@@ -1,4 +1,4 @@
-package com.example.cooperative.contract.controller.model.request;
+package com.example.cooperative.contract.model.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,6 +11,7 @@ public class VoteRequest {
 
     private String idAgenda;
     private String idSession;
+    private String idUser;
     private String choose;
 
 }

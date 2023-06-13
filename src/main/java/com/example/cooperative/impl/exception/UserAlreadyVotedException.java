@@ -2,10 +2,9 @@ package com.example.cooperative.impl.exception;
 
 import com.example.cooperative.impl.common.exception.BadRequestException;
 
-public class AgendaNotFoundException extends BadRequestException {
+public class UserAlreadyVotedException extends BadRequestException {
 
-    public AgendaNotFoundException(String message) {
+    public UserAlreadyVotedException(String message) {
         super(message);
     }
-
 }

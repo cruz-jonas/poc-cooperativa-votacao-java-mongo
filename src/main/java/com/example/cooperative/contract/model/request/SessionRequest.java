@@ -1,4 +1,4 @@
-package com.example.cooperative.contract.controller.model.request;
+package com.example.cooperative.contract.model.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

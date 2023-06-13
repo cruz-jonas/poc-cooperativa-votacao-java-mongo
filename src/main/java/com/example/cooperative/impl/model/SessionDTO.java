@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class SessionDTO {
 
+    private String id;
     private String idAgenda;
     private Integer duration;
     private LocalDateTime createdAt;

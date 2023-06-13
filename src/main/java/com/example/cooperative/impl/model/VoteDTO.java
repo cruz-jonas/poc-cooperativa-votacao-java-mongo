@@ -11,6 +11,7 @@ public class VoteDTO {
 
     private String idAgenda;
     private String idSession;
+    private String idUser;
     private String choose;
 
 }

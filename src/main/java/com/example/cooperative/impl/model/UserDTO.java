@@ -4,15 +4,15 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.Map;
+import java.util.List;
 
 @Data
 @Builder
 @AllArgsConstructor
-public class AgendaDTO {
+public class UserDTO {
 
     private String id;
     private String name;
-    private Map<String, Integer> votos;
+    private List<String> votedAgendas;
 
 }

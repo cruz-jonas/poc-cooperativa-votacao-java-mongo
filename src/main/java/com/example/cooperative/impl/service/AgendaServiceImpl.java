@@ -7,8 +7,10 @@ import com.example.cooperative.integration.repository.AgendaMongoRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -17,13 +19,14 @@ public class AgendaServiceImpl implements AgendaFacade {
     private final AgendaMongoRepository agendaMongoRepository;
     private final ObjectMapper objectMapper;
 
+    @Transactional
     @Override
     public String create(AgendaDTO dto) {
+        dto.setId(UUID.randomUUID().toString());
         dto.setVotos(new HashMap<>() {});
-        dto.getVotos().put("sim", 0);
-        dto.getVotos().put("não", 0);
-        return agendaMongoRepository.save(objectMapper.convertValue(dto, AgendaEntity.class))
-                .getId().toString();
+        dto.getVotos().put("Sim", 0);
+        dto.getVotos().put("Não", 0);
+        return agendaMongoRepository.save(objectMapper.convertValue(dto, AgendaEntity.class)).getId();
     }
 
     @Override
@@ -31,8 +34,9 @@ public class AgendaServiceImpl implements AgendaFacade {
         return objectMapper.convertValue(agendaMongoRepository.findById(id), AgendaDTO.class);
     }
 
+    @Transactional
     @Override
     public void update(AgendaDTO dto) {
-        agendaMongoRepository. save(objectMapper.convertValue(dto, AgendaEntity.class));
+        agendaMongoRepository.save(objectMapper.convertValue(dto, AgendaEntity.class));
     }
 }

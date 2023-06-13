@@ -5,9 +5,8 @@ import com.example.cooperative.impl.model.VoteDTO;
 
 public interface SessionFacade {
 
-    String openSession(SessionDTO dto);
+    String create(SessionDTO dto);
     void registerVoto(VoteDTO dto);
-    String generateResult();
     SessionDTO findById(String id);
 
 }
