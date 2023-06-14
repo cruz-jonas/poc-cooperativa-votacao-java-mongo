@@ -17,12 +17,4 @@ public class BadRequestException extends RuntimeException {
                 .reason(HttpStatus.BAD_REQUEST.getReasonPhrase())
                 .build();
     }
-
-    public BadRequestException(String code, String message) {
-        this.failedResponse = APIException.builder()
-                .code(code)
-                .message(message)
-                .reason(HttpStatus.BAD_REQUEST.getReasonPhrase())
-                .build();
-    }
 }
