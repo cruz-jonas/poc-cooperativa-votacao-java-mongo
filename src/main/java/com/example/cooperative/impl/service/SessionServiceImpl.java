@@ -1,5 +1,6 @@
 package com.example.cooperative.impl.service;
 
+import com.example.cooperative.impl.SessionClosedMapper;
 import com.example.cooperative.impl.common.enumeration.VoteOptionEnum;
 import com.example.cooperative.impl.exception.AgendaNotFoundException;
 import com.example.cooperative.impl.exception.SessionClosedException;
@@ -17,6 +18,7 @@ import com.example.cooperative.integration.repository.SessionMongoRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +36,7 @@ public class SessionServiceImpl implements SessionFacade {
     private final AgendaFacade agendaFacade;
     private final UserFacade userFacade;
     private final ObjectMapper objectMapper;
+    private final MessageProducerService messageProducerService;
     private static final Integer SESSION_DURATION = 1;
 
     @Override
@@ -42,6 +45,7 @@ public class SessionServiceImpl implements SessionFacade {
         validateDuration(dto);
         dto.setCreatedAt(LocalDateTime.now());
         dto.setId(UUID.randomUUID().toString());
+        dto.setOpened(true);
         log.info("[SessionServiceImpl - create] Objeto sendo persistido {}", dto);
         return saveSession(dto);
     }
@@ -92,6 +96,30 @@ public class SessionServiceImpl implements SessionFacade {
         return objectMapper.convertValue(sessionMongoRepository.findById(id), SessionDTO.class);
     }
 
+    @Scheduled(cron = "0 0/1 * * * ?")
+    public void closeSession() {
+        sessionMongoRepository.findAllByIsOpenedTrue()
+                .stream()
+                .filter(this::validateMustClose)
+                .map(session -> objectMapper.convertValue(session, SessionDTO.class))
+                .forEach(this::processSessionToClose);
+        log.info("[SessionServiceImpl - closeSession]Fim da operação de fechar sessões.");
+
+
+    }
+
+    private void processSessionToClose(SessionDTO sessioDTO) {
+        log.info("[SessionServiceImpl - processSessionToClose]Inciando fechamento da  sessão {}", sessioDTO);
+        sessioDTO.setOpened(false);
+        saveSession(sessioDTO);
+        AgendaDTO agendaDTO = agendaFacade.findById(sessioDTO.getIdAgenda());
+        messageProducerService.sendMessagetoQueue(SessionClosedMapper.buildMessage(agendaDTO, sessioDTO));
+    }
+
+    private boolean validateMustClose(SessionEntity session) {
+            return LocalDateTime.now().isAfter(session.getCreatedAt().plusMinutes(session.getDuration()));
+    }
+
     private void validateDuration(SessionDTO dto) {
         if(Objects.isNull(dto.getDuration())) {
             dto.setDuration(SESSION_DURATION);
@@ -114,7 +142,7 @@ public class SessionServiceImpl implements SessionFacade {
             log.error("[SessionServiceImpl - validateSession] Sessao nao encontrada {}", dto);
             throw new SessionNotFoundException("Sessão não encontrada");
         }
-        if(LocalDateTime.now().isAfter(sessionDTO.getCreatedAt().plusMinutes(sessionDTO.getDuration()))) {
+        if(!sessionDTO.isOpened()) {
             log.error("[SessionServiceImpl - validateSession] Sessao {} encerrada em {}", dto.getIdSession(),
                     sessionDTO.getCreatedAt().plusMinutes(sessionDTO.getDuration()));
             throw new SessionClosedException("Sessão encerrada em "+sessionDTO.getCreatedAt().plusMinutes(sessionDTO.getDuration()));

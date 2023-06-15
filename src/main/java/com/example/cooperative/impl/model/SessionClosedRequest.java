@@ -5,16 +5,17 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @Data
 @Builder
 @AllArgsConstructor
-public class SessionDTO {
+public class SessionClosedRequest {
 
-    private String id;
+    private String idSession;
     private String idAgenda;
-    private Integer duration;
-    private LocalDateTime createdAt;
-    private boolean isOpened;
+    private String nameAgenda;
+    private LocalDateTime dthrClosed;
+    private Map<String, Integer> votos;
 
 }

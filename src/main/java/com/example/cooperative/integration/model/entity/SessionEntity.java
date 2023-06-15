@@ -12,8 +12,9 @@ import java.time.LocalDateTime;
 public class SessionEntity {
 
     private String id;
-    private String agenda;
+    private String idAgenda;
     private Integer duration;
     private LocalDateTime createdAt;
+    private boolean isOpened;
 
 }

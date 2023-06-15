@@ -1,6 +1,6 @@
 package com.example.cooperative.contract.controller;
 
-import com.example.cooperative.contract.model.request.AgendaRequest;
+import com.example.cooperative.contract.model.request.UserRequest;
 import com.example.cooperative.impl.facade.UserFacade;
 import com.example.cooperative.impl.model.UserDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,7 +22,7 @@ public class UserController {
     private final ObjectMapper objectMapper;
 
     @PostMapping()
-    public String create(@RequestBody AgendaRequest request) {
+    public String create(@RequestBody UserRequest request) {
         log.info("[UserController - create] Objeto recebido {}", request);
         return userFacade.create(objectMapper.convertValue(request, UserDTO.class));
     }

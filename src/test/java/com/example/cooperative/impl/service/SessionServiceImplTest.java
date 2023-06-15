@@ -57,8 +57,11 @@ class SessionServiceImplTest {
         VoteDTO voteDTO = VoteDTO.builder()
                 .choose("Sim")
                 .idSession(UUID.randomUUID().toString()).build();
-        SessionEntity entity = SessionEntity.builder().createdAt(LocalDateTime.now().minusMinutes(3)).build();
+        SessionEntity entity = SessionEntity.builder()
+                .isOpened(true)
+                .createdAt(LocalDateTime.now().minusMinutes(3)).build();
         SessionDTO sessionDTO = SessionDTO.builder()
+                .isOpened(true)
                 .duration(4)
                 .createdAt(LocalDateTime.now().minusMinutes(3)).build();
         UserDTO userDTO = UserDTO.builder().build();
